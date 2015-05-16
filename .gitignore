@@ -1,0 +1,31 @@
+private void RunScript(List<Curve> curves, string filePath, bool export, ref object A){
+  Rhino.RhinoDoc doc = Rhino.RhinoDoc.ActiveDoc;
+    //filePath external input string
+    if(filePath == null || filePath == String.Empty)
+    {
+      //Save to the curent document location
+      filePath = doc.Path;
+
+      //If document is not saved
+      if(filePath == String.Empty)
+      {
+        //Save to the desktop
+        filePath = System.Environment.GetFolderPath(System.Environment.SpecialFolder.Desktop);
+      }
+    }
+    //export external input bool
+    List<Guid> ids = new List<Guid>();
+    if(export)
+    {
+      for(int i = 0; i < curves.Count;i++)
+      {
+        //string savedLocation = filePath + "\\ file_" + i + ".dxf";
+        doc.Objects.UnselectAll();
+        Guid crv_obj = doc.Objects.AddCurve(curves[i]);
+        ids.Add(crv_obj);
+      }
+      doc.Objects.Select(ids);
+      string savedLocation = filePath + "\\ test.dxf";
+      RhinoApp.RunScript("-_Export \n\"" + savedLocation + "\"\n _Enter", true);
+    }
+    }
